@@ -38,8 +38,11 @@ public class TelnetCommandSenderThread extends Thread implements ICommandSender 
         try {
             String s4;
 
+            writer.write(">");
+            writer.flush();
             while (!server.isServerStopped() && server.isServerRunning() &&
                     (s4 = reader.readLine()) != null) {
+                writer.write(">");
                 LOGGER.info("{} issued command: {}", socket.getInetAddress(), s4);
                 server.addPendingCommand(s4, this);
             }
@@ -55,8 +58,10 @@ public class TelnetCommandSenderThread extends Thread implements ICommandSender 
     @Override
     public void addChatMessage(IChatComponent component) {
         try {
+            writer.write("\r");
             writer.write(component.getUnformattedText());
-            writer.write("\r\n");
+            writer.write("\r\n>");
+            writer.flush();
         } catch (IOException e) {
             LOGGER.error("Exception handling output", e);
         }
