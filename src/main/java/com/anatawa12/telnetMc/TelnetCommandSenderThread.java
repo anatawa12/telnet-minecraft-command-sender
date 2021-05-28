@@ -1,4 +1,4 @@
-package com.anatawa12.telnetCommandSender;
+package com.anatawa12.telnetMc;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -7,8 +7,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,8 +15,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
+import static com.anatawa12.telnetMc.ModTelnetCommandSender.LOGGER;
+
 public class TelnetCommandSenderThread extends Thread implements ICommandSender {
-    private final Logger LOGGER;
     private final Socket socket;
     private final BufferedReader reader;
     private final BufferedWriter writer;
@@ -30,7 +29,6 @@ public class TelnetCommandSenderThread extends Thread implements ICommandSender 
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         String name = "TelnetCommandSenderThread/" + socket.getInetAddress();
-        this.LOGGER = LogManager.getLogger(name);
         this.setName(name);
         this.setDaemon(true);
     }
@@ -42,6 +40,7 @@ public class TelnetCommandSenderThread extends Thread implements ICommandSender 
 
             while (!server.isServerStopped() && server.isServerRunning() &&
                     (s4 = reader.readLine()) != null) {
+                LOGGER.info("{} issued command: {}", socket.getInetAddress(), s4);
                 server.addPendingCommand(s4, this);
             }
         } catch (IOException ioexception1) {
