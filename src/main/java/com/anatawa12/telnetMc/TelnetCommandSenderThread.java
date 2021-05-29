@@ -28,7 +28,7 @@ public class TelnetCommandSenderThread extends Thread implements ICommandSender 
         this.server = server;
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        String name = "TelnetCommandSenderThread/" + socket.getInetAddress();
+        String name = "Telnet " + socket.getInetAddress();
         this.setName(name);
         this.setDaemon(true);
     }
